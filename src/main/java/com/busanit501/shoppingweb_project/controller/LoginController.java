@@ -13,11 +13,11 @@ public class LoginController {
                         @RequestParam(value = "logout", required = false) String logout,
                         Model model) {
         if (error != null) {
-            model.addAttribute("errorMessage", "아이디 또는 비밀번호가 올바르지 않습니다.");
+            model.addAttribute("error", true);
         }
         if (logout != null) {
             model.addAttribute("message", "로그아웃 되었습니다.");
         }
-        return "/login";
+        return "login";
     }
 }

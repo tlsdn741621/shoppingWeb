@@ -1,5 +1,7 @@
 package com.busanit501.shoppingweb_project.config;
 
+import com.busanit501.shoppingweb_project.repository.MemberRepository;
+import com.busanit501.shoppingweb_project.security.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +19,11 @@ public class SecurityConfig {
 
     private final UserDetailsService customUserDetailsService;
 
+    @Bean
+    public CustomOAuth2UserService customOAuth2UserService(MemberRepository memberRepository, PasswordEncoder passwordEncoder) {
+        return new CustomOAuth2UserService(memberRepository, passwordEncoder);
+    }
+
     // 비밀번호 암호화에 사용될 Bean
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -30,7 +37,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // 인증 없이 접근 허용할 경로
-                        .requestMatchers("/signup", "/login", "/css/**", "/js/**", "/api/check-id").permitAll()
+                        .requestMatchers("/home", "/signup", "/login", "/css/**", "/js/**", "/images/**", "/api/check-id").permitAll()
                         // 그 외 모든 요청은 인증 필요
                         .anyRequest().authenticated()
                 )
@@ -42,13 +49,22 @@ public class SecurityConfig {
                 )
                 .rememberMe(rememberMe -> rememberMe
                         .key("uniqueAndSecretKey")
+                        .rememberMeParameter("remember-Me")
                         .tokenValiditySeconds(7 * 24 * 60 * 60)
                         .userDetailsService(customUserDetailsService) // UserDetailsService 명확히 지정
+                )
+                .sessionManagement(session -> session
+                        .sessionFixation().migrateSession()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
                         .invalidateHttpSession(true)
+                )
+                .oauth2Login(oauthLogin -> oauthLogin
+                        .loginPage("/login")
+                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService(null, null)))
+                        .defaultSuccessUrl("/home", true)
                 );
 
         return http.build();
