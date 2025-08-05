@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fashion Store - 메인</title>
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+
+<body>
+<header class="header">
+    <div class="container d-flex justify-content-between align-items-center py-3">
+        <!-- 로고 -->
+        <div class="logo">
+            <h1><a href="/home" class="text-decoration-none text-dark">Fashion Store</a></h1>
+        </div>
+
+        <!-- 검색창 -->
+        <div class="search-container d-flex">
+            <input type="text" id="searchInput" placeholder="상품을 검색하세요..." class="form-control me-2">
+            <button onclick="searchProducts()" class="btn btn-outline-primary">검색</button>
+        </div>
+
+        <!-- 네비게이션 버튼 -->
+        <div class="nav-buttons d-flex align-items-center gap-2">
+
+            <!-- 공통 버튼 -->
+
+            <div class="d-flex justify-content-end gap-3 my-3">
+                <button class="btn btn-outline-primary d-flex align-items-center gap-2" onclick="goToMyPage()">
+                    <i class="bi bi-person-circle"></i> 마이페이지
+                </button>
+
+                <button class="btn btn-outline-success d-flex align-items-center gap-2" onclick="goToCart()">
+                    <i class="bi bi-cart3"></i> 장바구니 (<span id="cartCount">0</span>)
+                </button>
+            </div>
+
+            <!-- 로그인 상태일 때 -->
+            <div sec:authorize="isAuthenticated()" class="d-flex align-items-center gap-2">
+                <span sec:authentication="name" class="fw-bold text-primary"></span>
+                <img th:if="${#authentication.principal instanceof T(org.springframework.security.oauth2.core.user.OAuth2User) and #authentication.principal.isKakaoUser()}"
+                     th:src="@{/images/login/kakao_logo_small.png}"
+                     alt="카카오 로그인"
+                     style="width:20px; height:20px; margin-left:5px;" />
+                <a href="/logout" class="btn btn-outline-danger btn-sm">로그아웃</a>
+            </div>
+
+            <!-- 비로그인 상태일 때 -->
+            <div sec:authorize="!isAuthenticated()" class="d-flex gap-2">
+                <button onclick="goToLogin()" class="btn btn-outline-primary btn-sm">로그인</button>
+                <button onclick="goToSignup()" class="btn btn-outline-success btn-sm">회원가입</button>
+            </div>
+
+            <!-- 관리자 전용 버튼 -->
+            <div sec:authorize="hasRole('ADMIN')" class="d-flex flex-column align-items-start ms-3">
+                <span class="text-danger fw-bold">관리자 계정입니다</span>
+                <div class="d-flex gap-2 mt-1">
+                    <a href="/admin" class="btn btn-warning btn-sm">관리자 페이지</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+
+<main class="main">
+    <div class="container">
+        <section class="categories">
+            <h2>카테고리</h2>
+            <div class="category-grid">
+                <div class="category-card" onclick="filterByCategory('하의')">
+                    <h3>바지</h3>
+                    <p>편안한 바지 컬렉션</p>
+                </div>
+                <div class="category-card" onclick="filterByCategory('신발')">
+                    <h3>신발</h3>
+                    <p>스타일리시한 신발</p>
+                </div>
+                <div class="category-card" onclick="filterByCategory('상의')">
+                    <h3>상의</h3>
+                    <p>트렌디한 상의</p>
+                </div>
+                <div class="category-card" onclick="filterByCategory('아우터')">
+                    <h3>아우터</h3>
+                    <p>따뜻한 아우터</p>
+                </div>
+                <div class="category-card" onclick="filterByCategory('원피스')">
+                    <h3>원피스</h3>
+                    <p>지금 아니면 못사즌 원피스</p>
+                </div>
+                <div class="category-card" onclick="filterByCategory('가방')">
+                    <h3>가방</h3>
+                    <p>아직도 백팩 매고 다니게?</p>
+                </div>
+                <div class="category-card" onclick="filterByCategory('액세서리')">
+                    <h3>악세서리</h3>
+                    <p>악세서리 하나만으로 분위기를 다르게</p>
+                </div>
+                <div class="category-card" onclick="filterByCategory('기타/알 수 없음')">
+                    <h3>기타/알 수 없음</h3>
+                    <p>다른 쇼핑몰 갈 필요 없이 여기서 원클릭으로!</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="products">
+            <div class="products-header">
+                <h2>상품 목록</h2>
+                <button onclick="showAllProducts()" class="show-all-btn">전체 보기</button>
+            </div>
+            <div class="product-grid" id="productGrid">
+                <!-- 상품들이 JavaScript로 동적 생성됩니다 -->
+            </div>
+        </section>
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <p>&copy; 2024 Fashion Store. All rights reserved.</p>
+    </div>
+</footer>
+
+
+<script layout:fragment="script" th:inline="javascript">
+
+    // html이 렌더링 되기 전에 이 함수를 실행시켜라
+    // fetch -> RestAPI를 실행시키기 위한 명령어
+    window.onload = function(){
+        fetch('/api/products')
+            .then(response => response.json())
+            //data => RestAPI에서 받아온 데이터
+            .then(data => {
+                console.log("전체 상품 : ", data);
+                displayProducts(data);
+                window.allProducts = data;
+            });
+    }
+    // products라는 데이터가 전달 됨 List형식
+    // 페이지 로딩 시 장바구니 개수 업데이트
+    document.addEventListener('DOMContentLoaded', function () {
+        updateCartCount();
+    });
+
+    function updateCartCount() {
+        fetch('/api/cart')
+            .then(res => {
+                if (!res.ok) throw new Error('장바구니 불러오기 실패');
+                return res.json();
+            })
+            .then(data => {
+                const count = data.length;
+                document.getElementById('cartCount').textContent = count;
+            })
+            .catch(err => {
+                console.error(err);
+                // 오류 시 0으로 설정
+                document.getElementById('cartCount').textContent = 0;
+            });
+    }
+
+    function goToCart() {
+        window.location.href = '/cart';
+    }
+
+    // 상품 표시 (home.html)
+    function displayProducts(productsToShow) {
+        const productGrid = document.getElementById('productGrid');
+        if (!productGrid) return;
+        productGrid.innerHTML = '';
+        productsToShow.forEach(product => {
+            const productCard = document.createElement('div');
+            productCard.className = 'product-card';
+
+            // 재고가 0인지 확인
+            const isSoldOut = product.stock === 0;
+
+            let soldOutOverlay = '';
+            if (isSoldOut) {
+                soldOutOverlay = `
+                    <div class="sold-out-overlay">
+                        <div class="sold-out-text">Sold Out</div>
+                    </div>
+                `;
+            }
+
+            productCard.innerHTML = `
+                ${soldOutOverlay}
+                <img src="${product.thumbnailFileName != null ? '/api/image/display/' + product.thumbnailFileName : '/images/default_product.png'}"
+                     alt="${product.productName}"
+                     class="product-image" />
+                <div class="product-info">
+                    <h3 onclick="goToProductDetail(${product.productId})">${product.productName}</h3>
+                    <p>카테고리: ${product.productTag}</p>
+                    <div class="product-price">${Number(product.price).toLocaleString()}원</div>
+                    <button class="add-to-cart-btn" onclick="addToCart(${product.productId}, '${product.productName}')" ${isSoldOut ? 'disabled' : ''}>
+                        장바구니 담기
+                    </button>
+                </div>
+            `;
+            productGrid.appendChild(productCard);
+        });
+    }
+
+    function goToProductDetail(productId) {
+        window.location.href = `/products/${productId}`; // 또는 /product-detail/${productId}
+        // 이 주소에 대한 Controller을 안만들었어요
+    }
+
+    function addToCart(productId, productName) {
+        const payload = {
+            productId: productId,
+            quantity: 1
+        };
+
+        fetch('/api/cart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('장바구니 추가에 실패했습니다.');
+                }
+                return res.json();
+            })
+            .then(data => {
+                alert(`🛒 ${productName}이(가) 장바구니에 추가되었습니다.`);
+                updateCartCount();
+                // 필요시 UI 업데이트 or 장바구니 수량 갱신
+                // updateCartCount();
+            })
+            .catch(err => {
+                console.error(err);
+                alert('장바구니 추가 중 오류가 발생했습니다.');
+            });
+    }
+
+    function filterByCategory(category) {
+
+        fetch(`/api/products?category=${encodeURIComponent(category)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log("📂 카테고리 결과:", data);
+                displayProducts(data);
+            });
+    }
+
+
+    // 전체 상품 보기 (home.html)
+    function showAllProducts() {
+        fetch('/api/products')
+            .then(response => response.json())
+            .then(data => displayProducts(data));
+    }
+
+    // 상품 검색 (home.html)
+    function searchProducts() {
+        const searchInput = document.getElementById('searchInput');
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        if (searchTerm === '') {
+            fetch('/api/products')
+                .then(res => res.json())
+                .then(data => displayProducts(data));
+            return;
+        }
+
+        fetch(`/api/products/search?keyword=${encodeURIComponent(searchTerm)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(" 검색 결과 :", data)
+                displayProducts(data);
+            })
+    }
+    // 엔터 키로 검색 (home.html의 검색창에서 사용)
+    document.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter' && event.target.id === 'searchInput') {
+            searchProducts();
+        }
+    });
+
+</script>
+<script src="/js/script.js"></script>
+</body>
+</html>

@@ -75,9 +75,15 @@ dependencies {
     // https://mvnrepository.com/artifact/net.coobird/thumbnailator
     implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.20'
 
-    // 9
-    // 보안 기능을 쉽게 사용할 수 있게 해주는 Spring Boot 기본 보안 도구
-    implementation 'org.springframework.boot:spring-boot-starter-security'
+    // 9, 시큐리티 설정
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '3.5.3'
+
+    // 10, 타임리프 , 시큐리티 연동 설정
+    // https://mvnrepository.com/artifact/org.thymeleaf.extras/thymeleaf-extras-springsecurity6
+    implementation group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity6', version: '3.1.2.RELEASE'
+
+    // 11, 카카오 로그인, Oauth2 도구 설치.
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client', version: '3.5.3'
 }
 
 tasks.named('test') {

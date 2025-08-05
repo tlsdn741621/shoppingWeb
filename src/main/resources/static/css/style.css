@@ -20,7 +20,7 @@ body {
 /* Header */
 .header {
     background: #fff;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -111,7 +111,7 @@ body {
     background: white;
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
     cursor: pointer;
     transition: transform 0.3s, box-shadow 0.3s;
@@ -119,7 +119,7 @@ body {
 
 .category-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
 }
 
 .category-card h3 {
@@ -158,23 +158,60 @@ body {
     background: white;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s;
+    position: relative;
+    /* 자식 요소의 position: absolute 기준 */
+}
+
+/* 품절 오버레이 */
+.sold-out-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.7);
+    /* 반투명 흰색 배경 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.sold-out-text {
+    color: red;
+    font-size: 2rem;
+    font-weight: bold;
+    transform: rotate(-15deg);
+    /* 텍스트 약간 회전 */
+    border: 3px solid red;
+    padding: 10px 20px;
+    border-radius: 10px;
 }
 
 .product-card:hover {
     transform: translateY(-5px);
 }
 
+/*.product-image {*/
+/*    width: 100%;*/
+/*    height: 200px;*/
+/*    background: #ecf0f1;*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*    font-size: 3rem;*/
+/*    color: #bdc3c7;*/
+/*}*/
 .product-image {
     width: 100%;
     height: 200px;
-    background: #ecf0f1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3rem;
-    color: #bdc3c7;
+    object-fit: contain;
+    background-color: #f8f9fa;
+    /* 페이지 배경색과 맞추기 */
+    border-radius: 8px;
+    display: block;
 }
 
 .product-info {
@@ -220,6 +257,14 @@ body {
     background: #2980b9;
 }
 
+.add-to-cart-btn:disabled {
+    background-color: #ccc;
+    /* 회색 배경 */
+    cursor: not-allowed;
+    /* 금지 커서 */
+    color: #666;
+}
+
 /* Product Detail Page */
 .back-btn {
     padding: 0.75rem 1.5rem;
@@ -247,15 +292,55 @@ body {
     margin-bottom: 3rem;
 }
 
+
+
+/*제품 상세 이미지 조절css*/
+.product-detail-images {
+    display: flex;
+    flex-direction: column;
+    /* 세로 방향 정렬 */
+    gap: 10px;
+    /* 이미지 사이 간격 */
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.product-detail-images img {
+    width: 100%;
+    /* 가로폭 100%로 꽉 채우기 */
+    max-width: 400px;
+    /* 최대 너비 제한 (원하는 크기로 조절 가능) */
+    height: auto;
+    /* 높이는 자동 비율 유지 */
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.product-detail-images img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+
+
 .product-image-large {
     aspect-ratio: 1;
-    background: #ecf0f1;
+    background: transparent;
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 8rem;
     color: #bdc3c7;
+}
+
+.product-image-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* 이미지가 컨테이너를 꽉 채우면서 비율을 유지하도록 함 */
 }
 
 .product-info-detail {
@@ -361,7 +446,7 @@ body {
     background: white;
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .review-write-card h3 {
@@ -431,7 +516,7 @@ body {
     background: white;
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
 
@@ -460,7 +545,7 @@ body {
     background: white;
     padding: 1.5rem;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .review-header {
@@ -500,7 +585,7 @@ body {
     background: white;
     padding: 3rem;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
     color: #6c757d;
 }
@@ -517,7 +602,7 @@ body {
     background: white;
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 400px;
 }
@@ -578,7 +663,7 @@ body {
     background: white;
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .cart-container h2 {
@@ -695,7 +780,7 @@ body {
     background: white;
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .mypage-container h2 {
@@ -709,13 +794,15 @@ body {
     gap: 2rem;
 }
 
-.user-info, .order-history {
+.user-info,
+.order-history {
     padding: 1.5rem;
     border: 1px solid #ecf0f1;
     border-radius: 8px;
 }
 
-.user-info h3, .order-history h3 {
+.user-info h3,
+.order-history h3 {
     margin-bottom: 1rem;
     color: #2c3e50;
 }
@@ -836,4 +923,7 @@ body {
     .product-title {
         font-size: 1.5rem;
     }
+
+
+
 }
